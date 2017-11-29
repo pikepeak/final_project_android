@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="kmitl.final_project_android.khunach58070011.gamer.EditUserActivity">
-
+    tools:context="kmitl.final_project_android.khunach58070011.gamer.EditGroup">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,13 +16,13 @@
             android:layout_height="wrap_content"
             android:textSize="30sp"
             android:gravity="center"
-            android:text="EditProfile"
+            android:text="EditGroupProfile"
             android:layout_marginBottom="30dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="INAPPNAME"
+            android:text="NAME"
             android:layout_gravity="center"/>
 
         <EditText
@@ -38,33 +37,18 @@
             android:text="favoritegame"
             android:layout_gravity="center"/>
 
-        <EditText
+        <Button
             android:id="@+id/favgame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text=""
-            android:inputType="text"
-            android:maxLines="1"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="favoritegroup"
-            android:layout_gravity="center"/>
-
-        <Button
-            android:id="@+id/favgroup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:inputType="text"
             android:onClick="selection"
             android:maxLines="1"
             />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="About Me"
+            android:text="About Us"
             android:layout_gravity="center"/>
 
         <EditText
@@ -75,7 +59,7 @@
             android:minLines="1"
             android:maxLines = "2"
             android:text=""
-        />
+            />
     </LinearLayout>
 
     <LinearLayout

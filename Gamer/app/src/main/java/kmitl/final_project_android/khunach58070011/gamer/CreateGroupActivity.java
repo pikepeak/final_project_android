@@ -50,7 +50,6 @@ public class CreateGroupActivity extends AppCompatActivity {
                 mUserGroup.child(mAuth.getUid().toString()).child(uniqueKey).setValue(gamerGroup);
                 DatabaseReference mGroupUser = mRootRef.child("group-users");
                 mGroupUser.child(uniqueKey).child(mAuth.getUid().toString()).setValue(user);
-                mGroupUser.child(uniqueKey).child(mAuth.getUid().toString()).child("Type").setValue("owner");
                 finish();
             }
         });

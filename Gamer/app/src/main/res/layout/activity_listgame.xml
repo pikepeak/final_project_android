@@ -4,14 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="kmitl.final_project_android.khunach58070011.gamer.Request">
-
+    tools:context="kmitl.final_project_android.khunach58070011.gamer.listgame">
     <TextView
         android:id="@+id/inv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Inviting"
+        android:text="addGameList"
         android:textSize="32dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -31,7 +30,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
     <ListView
-        android:id="@+id/list_request"
+        android:id="@+id/list_game"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
@@ -47,7 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="RequestJoinGroup"
+        android:text="ListGame"
         android:textSize="32dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -58,7 +57,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
-        android:text="Enter UserEmail"
+        android:text="Enter GameName"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/inv" />
@@ -70,8 +69,8 @@
         android:layout_marginRight="16dp"
         android:layout_marginStart="5dp"
         android:layout_marginTop="8dp"
-        android:onClick="sentinv"
-        android:text="sent"
+        android:onClick="add"
+        android:text="add"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toEndOf="@+id/inputname"
         app:layout_constraintTop_toBottomOf="@+id/textView5" />

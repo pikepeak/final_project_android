@@ -16,43 +16,39 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import kmitl.final_project_android.khunach58070011.gamer.model.GamerGroup;
 import kmitl.final_project_android.khunach58070011.gamer.model.UserInfoSent;
 
 import static kmitl.final_project_android.khunach58070011.gamer.MainActivity.nameGB;
 
-public class EditUserActivity extends AppCompatActivity {
+public class EditGroup extends AppCompatActivity {
     private static final String TAG = "MyApp";
     private FirebaseAuth mAuth;
     TextView showname;
     TextView showdesc;
-    TextView showgame;
-    Button showgroup;
+    Button showgame;
+    String gid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_user);
+        setContentView(R.layout.activity_edit_group);
         mAuth = FirebaseAuth.getInstance();
+        gid = getIntent().getStringExtra("ID");
         DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
-        loadUserProfile(mRootRef);
-
+        loadGroup(mRootRef);
     }
 
-    private void loadUserProfile(DatabaseReference mRootRef) {
-        mRootRef.child("users").child(mAuth.getUid()).
+    private void loadGroup(DatabaseReference mRootRef) {
+        mRootRef.child("groups").child(gid).
                 addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        UserInfoSent user = dataSnapshot.getValue(UserInfoSent.class);
-                        if (user == null) {
-                            Toast.makeText(EditUserActivity.this, "Error: could not fetch user.", Toast.LENGTH_LONG).show();
+                        GamerGroup gamerGroup = dataSnapshot.getValue(GamerGroup.class);
+                        if (gamerGroup == null) {
+                            Toast.makeText(EditGroup.this, "Error: could not fetch user.", Toast.LENGTH_LONG).show();
                         } else {
                             String sendname;
-                            if (user.getAppname() == null){
-                                sendname = user.getName();
-                            }else {
-                                sendname = user.getAppname();
-                            }
-                            writeUserProfile(sendname, user.getDesc(), user.getFavgame(), user.getFavgroup());
+                            writeGroup(gamerGroup.getName(), gamerGroup.getDesc(), gamerGroup.getFavgame());
                         }
                         //finish();
                     }
@@ -64,25 +60,21 @@ public class EditUserActivity extends AppCompatActivity {
                 });
     }
 
-    private void writeUserProfile(String sendname, String desc, String favgame, String favgroup) {
+    private void writeGroup(String sendname, String desc, String favgame) {
         showname = (TextView) findViewById(R.id.editName);
         showname.setText(sendname);
         showdesc = (TextView) findViewById(R.id.editDesc);
         showdesc.setText(desc);
-        showgame = (TextView) findViewById(R.id.favgame);
+        showgame = (Button) findViewById(R.id.favgame);
         showgame.setText(favgame);
-        showgroup = (Button) findViewById(R.id.favgroup);
-        showgroup.setText(favgroup);
     }
 
     public void save(View view) {
         DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference mUsersRef = mRootRef.child("users");
-        //mUsersRef.child(user.getUid()).setValue(userInfoSent);
-        mUsersRef.child(mAuth.getUid()).child("appname").setValue(showname.getText().toString());
-        mUsersRef.child(mAuth.getUid()).child("desc").setValue(showdesc.getText().toString());
-        mUsersRef.child(mAuth.getUid()).child("favgame").setValue(showgame.getText().toString());
-        mUsersRef.child(mAuth.getUid()).child("favgroup").setValue(showgroup.getText().toString());
+        DatabaseReference mUsersRef = mRootRef.child("groups");
+        mUsersRef.child(gid).child("name").setValue(showname.getText().toString());
+        mUsersRef.child(gid).child("desc").setValue(showdesc.getText().toString());
+        mUsersRef.child(gid).child("favgame").setValue(showgame.getText().toString());
         finish();
     }
 
@@ -91,15 +83,15 @@ public class EditUserActivity extends AppCompatActivity {
     }
 
     public void selection(View view) {
-        Intent intent = new Intent(EditUserActivity.this, selectgroup.class);
-        intent.putExtra("ID", mAuth.getCurrentUser().getUid());
+        Intent intent = new Intent(EditGroup.this, selectgame.class);
+        intent.putExtra("ID", gid);
         startActivity(intent);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        showgroup = (Button) findViewById(R.id.favgroup);
-        showgroup.setText(nameGB);
+        showgame = (Button) findViewById(R.id.favgame);
+        showgame.setText(nameGB);
     }
 }

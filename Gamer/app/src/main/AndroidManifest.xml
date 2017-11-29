@@ -45,7 +45,14 @@
         <activity android:name=".groupActivity" />
         <activity android:name=".UserProfile" />
         <activity android:name=".Request" />
-        <activity android:name=".Message"></activity>
+        <activity android:name=".Message" />
+        <activity android:name=".EditGroup" />
+        <activity android:name=".listgame" />
+        <activity android:name=".selectgame" />
+        <activity android:name=".selectgroup" />
+        <activity android:name=".post" />
+        <activity android:name=".listpostAdapter" />
+        <activity android:name=".CreatePost"></activity>
     </application>
 
 </manifest>

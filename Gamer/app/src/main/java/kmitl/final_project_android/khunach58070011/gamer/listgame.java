@@ -20,30 +20,28 @@ import java.util.HashMap;
 import kmitl.final_project_android.khunach58070011.gamer.model.Requests;
 import kmitl.final_project_android.khunach58070011.gamer.model.UserInfoSent;
 
-public class Request extends AppCompatActivity {
+public class listgame extends AppCompatActivity {
     DatabaseReference mRootRef;
     private static final String TAG = "MyApp";
     private ArrayList<Requests> list = new ArrayList<>();
     private ArrayList<String> key = new ArrayList<>();
     private FirebaseAuth mAuth;
     private ListView viewList;
-    private TextView viewemail;
-    String id;
-    String name;
+    private TextView viewname;
+    String gid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_request);
-        id = getIntent().getStringExtra("ID");
-        name = getIntent().getStringExtra("Name");
+        setContentView(R.layout.activity_listgame);
+        gid = getIntent().getStringExtra("ID");
         mRootRef = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
-        viewemail = (TextView) findViewById(R.id.inputname);
-        loadMessagelist(mRootRef);
+        viewname = (TextView) findViewById(R.id.inputname);
+        loadgamelist(mRootRef);
     }
 
-    private void loadMessagelist(DatabaseReference mRootRef) {
-        mRootRef.child("requests").child(id).orderByChild("status").equalTo("wait").
+    private void loadgamelist(DatabaseReference mRootRef) {
+        mRootRef.child("group-list").child(gid).orderByKey().
                 addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -55,7 +53,7 @@ public class Request extends AppCompatActivity {
                             key.add(singleSnapshot.getKey());
                             list.add(requests);
                         }
-                        listingMessage();
+                        listingGame();
                     }
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
@@ -64,45 +62,25 @@ public class Request extends AppCompatActivity {
                 });
     }
 
-    private void listingMessage() {
-        viewList = (ListView) findViewById(R.id.list_request);
+    private void listingGame() {
+        viewList = (ListView) findViewById(R.id.list_game);
         ArrayList<HashMap> sentlist = new ArrayList<HashMap>();
         HashMap temp;
         int count = 0;
         for (Requests items: list) {
             temp = new HashMap();
             temp.put("FIRST_COLUMN", items.getName());
-            temp.put("SEC_COLUMN", items.getEmail());
             temp.put("ID_COLUMN", key.get(count));
             sentlist.add(temp);
             count += 1;
         }
-        listviewAdapter adapter = new listviewAdapter(Request.this, sentlist, id);
+        listviewAdapter adapter = new listviewAdapter(listgame.this, sentlist, gid);
         viewList.setAdapter(adapter);
     }
-    public void sentinv(View view) {
-        mRootRef.child("users").orderByChild("email").equalTo(viewemail.getText().toString()).
-                addListenerForSingleValueEvent(new ValueEventListener() {
-                    String key;
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot userSnapshot : dataSnapshot.getChildren()){
-                            UserInfoSent user = userSnapshot.getValue(UserInfoSent.class);
-                            key = userSnapshot.getKey();
-                        }
-                        final DatabaseReference mUserMessageRef = mRootRef.child("messages");
-                        mUserMessageRef.child(key).child(id).child("name").setValue(name);
-                        mUserMessageRef.child(key).child(id).child("type").setValue("inv");
-                        mUserMessageRef.child(key).child(id).child("ans").setValue("wait");
-                        mUserMessageRef.child(key).child(id).child("message").setValue("unread");
-                        finish();
-                    }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.e(TAG, databaseError.getMessage());
-                    }
-                });
-
+    public void add(View view) {
+                        final DatabaseReference mUserMessageRef = mRootRef.child("group-list");
+                        mUserMessageRef.child(gid).push().child("name").setValue(viewname.getText().toString());
+        loadgamelist(mRootRef);
     }
 }

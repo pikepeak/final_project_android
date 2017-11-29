@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +32,10 @@ public class groupActivity extends AppCompatActivity {
     private ArrayList<UserInfoSent> list = new ArrayList<>();
     private ArrayList<String> key = new ArrayList<>();
     GamerGroup user;
+    String leader;
+    private String gid;
+    int level;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +45,7 @@ public class groupActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         loadGroupProfile(mRootRef);
         loadGrouplist(mRootRef);
+        gid = id;
     }
     private void loadGrouplist(DatabaseReference mRootRef) {
         mRootRef.child("group-users").child(id).orderByChild("name").
@@ -76,10 +82,10 @@ public class groupActivity extends AppCompatActivity {
             sentlist.add(temp);
             count += 1;
         }
-        listviewAdapter adapter = new listviewAdapter(groupActivity.this, sentlist);
+        listviewAdapter adapter = new listviewAdapter(groupActivity.this, sentlist, leader, gid);
         viewList.setAdapter(adapter);
     }
-    private void loadGroupProfile(DatabaseReference mRootRef) {
+    private void loadGroupProfile(final DatabaseReference mRootRef) {
         mRootRef.child("groups").child(id).
                 addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -88,7 +94,16 @@ public class groupActivity extends AppCompatActivity {
                         if (user == null) {
                             Toast.makeText(groupActivity.this, "Error: could not fetch user.", Toast.LENGTH_LONG).show();
                         } else {
+                            updatedata(mRootRef);
                             writeProfile();
+                            Button b = (Button) findViewById(R.id.select);
+                            if (mAuth.getCurrentUser().getUid().equals(leader)){
+                                b.setText("edit");
+                                level = 1;
+                            }else {
+                                b.setText("leave");
+                                level = 0;
+                            }
                         }
                         //finish();
                     }
@@ -107,12 +122,19 @@ public class groupActivity extends AppCompatActivity {
         favgame.setText("Game : \n"+user.getFavgame());
         TextView desc = (TextView) findViewById(R.id.desc);
         desc.setText(user.getDesc());
+        leader = user.getLeader();
     }
 
     public void news(View view) {
+        Intent intent = new Intent(groupActivity.this, post.class);
+        intent.putExtra("ID", gid);
+        startActivity(intent);
     }
 
     public void list(View view) {
+        Intent intent = new Intent(groupActivity.this, listgame.class);
+        intent.putExtra("ID", gid);
+        startActivity(intent);
     }
 
     public void chat(View view) {
@@ -122,6 +144,8 @@ public class groupActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         loadGroupProfile(mRootRef);
+        loadGrouplist(mRootRef);
+
     }
 
     public void inv_request(View view) {
@@ -129,5 +153,38 @@ public class groupActivity extends AppCompatActivity {
         intent.putExtra("ID", id);
         intent.putExtra("Name", user.getName());
         startActivity(intent);
+    }
+
+    public void selection(View view) {
+        if (level == 1){
+            Intent intent = new Intent(groupActivity.this, EditGroup.class);
+            intent.putExtra("ID", gid);
+            startActivity(intent);
+        }else {
+            mRootRef.child("group-users").child(gid).child(mAuth.getCurrentUser().getUid()).removeValue();
+            mRootRef.child("messages").child(mAuth.getCurrentUser().getUid()).child(gid).removeValue();
+            mRootRef.child("requests").child(mAuth.getCurrentUser().getUid()).child(gid).removeValue();
+            mRootRef.child("user-groups").child(mAuth.getCurrentUser().getUid()).child(gid).removeValue();
+            finish();
+        }
+    }
+    private void updatedata(final DatabaseReference mRootRef) {
+        mRootRef.child("group-users").child(gid).orderByKey().
+                addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        int count = 0;
+                        for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
+                            mRootRef.child("user-groups").child(singleSnapshot.getKey()).child(gid).setValue(user);
+                            count += 1;
+                        }
+                        Log.d(TAG, String.valueOf(count));
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.e(TAG, databaseError.getMessage());
+                    }
+                });
     }
 }

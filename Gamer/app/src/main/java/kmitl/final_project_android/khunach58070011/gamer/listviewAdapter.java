@@ -23,6 +23,8 @@ import java.util.HashMap;
 import kmitl.final_project_android.khunach58070011.gamer.model.GamerGroup;
 import kmitl.final_project_android.khunach58070011.gamer.model.UserInfoSent;
 
+import static kmitl.final_project_android.khunach58070011.gamer.MainActivity.nameGB;
+
 
 class listviewAdapter extends BaseAdapter {
     private static final String TAG = "MyApp";
@@ -33,6 +35,8 @@ class listviewAdapter extends BaseAdapter {
     String id = "test";
     UserInfoSent user;
     private GamerGroup gamegroup;
+    String leader;
+    String gid;
 
     public listviewAdapter(MainActivity mainActivity, ArrayList<HashMap> list) {
         this.list = list;
@@ -40,10 +44,12 @@ class listviewAdapter extends BaseAdapter {
         select = 0;
     }
 
-    public listviewAdapter(groupActivity groupActivity, ArrayList<HashMap> sentlist) {
+    public listviewAdapter(groupActivity groupActivity, ArrayList<HashMap> sentlist, String leader, String gid) {
         this.list = sentlist;
         this.activity = groupActivity;
         select = 1;
+        this.leader = leader;
+        this.gid = gid;
     }
 
     public listviewAdapter(Request request, ArrayList<HashMap> sentlist, String id) {
@@ -58,6 +64,27 @@ class listviewAdapter extends BaseAdapter {
         this.activity = message;
         select = 3;
         this.id = id;
+    }
+
+    public listviewAdapter(listgame listgame, ArrayList<HashMap> sentlist, String gid) {
+        this.list = sentlist;
+        this.activity = listgame;
+        select = 4;
+        this.gid = gid;
+    }
+
+    public listviewAdapter(selectgame selectgame, ArrayList<HashMap> sentlist, String gid) {
+        this.list = sentlist;
+        this.activity = selectgame;
+        select = 5;
+        this.gid = gid;
+    }
+
+    public listviewAdapter(selectgroup selectgroup, ArrayList<HashMap> sentlist, String id) {
+        this.list = sentlist;
+        this.activity = selectgroup;
+        select = 6;
+        this.gid = id;
     }
 
     @Override
@@ -111,6 +138,8 @@ class listviewAdapter extends BaseAdapter {
                 public void onClick(View view) {
                     Intent intent = new Intent(activity, UserProfile.class);
                     intent.putExtra("ID", String.valueOf(map.get("ID_COLUMN")));
+                    intent.putExtra("leader", leader);
+                    intent.putExtra("gid", gid);
                     activity.startActivity(intent);
                 }
             });
@@ -126,9 +155,6 @@ class listviewAdapter extends BaseAdapter {
                 @Override
                 public void onClick(View view) {
                     mMessageRef.child(id).child(String.valueOf(map.get("ID_COLUMN"))).child("status").setValue("no");
-                    mUserMessageRef.child(String.valueOf(map.get("ID_COLUMN"))).child(id).child("type").setValue("requestback");
-                    mUserMessageRef.child(String.valueOf(map.get("ID_COLUMN"))).child(id).child("ans").setValue("no");
-                    mUserMessageRef.child(String.valueOf(map.get("ID_COLUMN"))).child(id).child("message").setValue("unread");
                     activity.finish();
                 }
             });
@@ -136,9 +162,6 @@ class listviewAdapter extends BaseAdapter {
                 @Override
                 public void onClick(View v) {
                     mMessageRef.child(id).child(String.valueOf(map.get("ID_COLUMN"))).child("status").setValue("yes");
-                    mUserMessageRef.child(String.valueOf(map.get("ID_COLUMN"))).child(id).child("type").setValue("requestback");
-                    mUserMessageRef.child(String.valueOf(map.get("ID_COLUMN"))).child(id).child("ans").setValue("yes");
-                    mUserMessageRef.child(String.valueOf(map.get("ID_COLUMN"))).child(id).child("message").setValue("unread");
                     DatabaseReference mUserGroup = mRootRef.child("user-groups");
                     mUserGroup.child(String.valueOf(map.get("ID_COLUMN"))).child(id).setValue(gamegroup);
                     DatabaseReference mGroupUser = mRootRef.child("group-users");
@@ -176,7 +199,45 @@ class listviewAdapter extends BaseAdapter {
                     activity.finish();
                 }
             });
-        } else {
+
+        }else if(select == 4){
+            holder.txtsec.setVisibility(View.GONE);
+            final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+            final DatabaseReference mUserMessageRef = mRootRef.child("messages");
+            holder.txtFirst.setText("game:" +map.get("FIRST_COLUMN"));
+            Button view = (Button) convertView.findViewById(R.id.mod);
+            view.setVisibility(View.GONE);
+            Button viewyes = (Button) convertView.findViewById(R.id.buttonyes);
+            viewyes.setVisibility(View.GONE);
+        }else if (select == 5) {
+            holder.txtsec.setVisibility(View.GONE);
+            holder.txtFirst.setText("Name: " + (CharSequence) map.get("FIRST_COLUMN"));
+            Button view = (Button) convertView.findViewById(R.id.mod);
+            view.setText("select");
+            Button viewyes = (Button) convertView.findViewById(R.id.buttonyes);
+            viewyes.setVisibility(View.GONE);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    nameGB = map.get("FIRST_COLUMN").toString();
+                    activity.finish();
+                }
+            });
+        }else if (select == 6) {
+            holder.txtsec.setVisibility(View.GONE);
+            holder.txtFirst.setText("GroupName: " + (CharSequence) map.get("FIRST_COLUMN"));
+            Button view = (Button) convertView.findViewById(R.id.mod);
+            view.setText("select");
+            Button viewyes = (Button) convertView.findViewById(R.id.buttonyes);
+            viewyes.setVisibility(View.GONE);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    nameGB = map.get("FIRST_COLUMN").toString();
+                    activity.finish();
+                }
+            });
+        }  else {
             holder.txtsec.setVisibility(View.GONE);
             holder.txtFirst.setText("Group Name : " + (CharSequence) map.get("FIRST_COLUMN"));
             Button view = (Button) convertView.findViewById(R.id.mod);

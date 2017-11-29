@@ -27,6 +27,7 @@ import kmitl.final_project_android.khunach58070011.gamer.model.UserInfoSent;
 
 
 public class MainActivity extends AppCompatActivity {
+    public static String nameGB;
     private static final String TAG = "MyApp";
     private ArrayList<GamerGroup> list = new ArrayList<>();
     private ArrayList<String> key = new ArrayList<>();
@@ -34,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
     ImageView imageView;
     DatabaseReference mRootRef;
     private ListView viewList;
+    private int msg;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,8 +93,33 @@ public class MainActivity extends AppCompatActivity {
         name.setText("Name : "+sendname);
         TextView showemail = (TextView) findViewById(R.id.email);
         showemail.setText("Email : \n"+email);
+        getmsg();
+        TextView showmsg = (TextView) findViewById(R.id.messagecnt);
+        showmsg.setText("unreadmessage :"+msg);
+
     }
-    private void loadUserProfile(DatabaseReference mRootRef) {
+
+    private void getmsg() {
+        mRootRef.child("messages").child(mAuth.getCurrentUser().getUid()).orderByChild("message").equalTo("unread").
+                addListenerForSingleValueEvent(new ValueEventListener(){
+
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        int count = 0;
+                        for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
+                            count += 1;
+                        }
+                        msg = count;
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    private void loadUserProfile(final DatabaseReference mRootRef) {
         mRootRef.child("users").child(mAuth.getUid()).
                 addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -109,11 +137,14 @@ public class MainActivity extends AppCompatActivity {
                             }else {
                                 sendname = user.getAppname();
                             }
+                            updatedata(mRootRef, user);
                             loadUserPic(user.getPic());
                             writeUserProfile(sendname, user.getEmail());
+
                         }
-                        //finish();
+
                     }
+
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
@@ -162,5 +193,25 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         loadUserProfile(mRootRef);
         loadGrouplist(mRootRef);
+    }
+
+    private void updatedata(DatabaseReference databaseReference, final UserInfoSent user) {
+        mRootRef.child("user-groups").child(mAuth.getCurrentUser().getUid()).orderByKey().
+                addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                int count = 0;
+                for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
+                    mRootRef.child("group-users").child(singleSnapshot.getKey()).child(mAuth.getCurrentUser().getUid()).setValue(user);
+                    count += 1;
+                }
+                Log.d(TAG, String.valueOf(count));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(TAG, databaseError.getMessage());
+            }
+        });
     }
 }

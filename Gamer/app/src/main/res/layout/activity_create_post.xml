@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="kmitl.final_project_android.khunach58070011.gamer.EditUserActivity">
-
+    tools:context="kmitl.final_project_android.khunach58070011.gamer.CreatePost">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,13 +16,13 @@
             android:layout_height="wrap_content"
             android:textSize="30sp"
             android:gravity="center"
-            android:text="EditProfile"
+            android:text="New Post"
             android:layout_marginBottom="30dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="INAPPNAME"
+            android:text="name of post"
             android:layout_gravity="center"/>
 
         <EditText
@@ -35,36 +34,21 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="favoritegame"
+            android:text="type of post"
             android:layout_gravity="center"/>
 
-        <EditText
-            android:id="@+id/favgame"
+        <ToggleButton
+            android:id="@+id/type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text=""
-            android:inputType="text"
             android:maxLines="1"
-            />
+            android:text="News"
+            android:textOff="News"
+            android:textOn="Event" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="favoritegroup"
-            android:layout_gravity="center"/>
-
-        <Button
-            android:id="@+id/favgroup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:inputType="text"
-            android:onClick="selection"
-            android:maxLines="1"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="About Me"
+            android:text="Detail"
             android:layout_gravity="center"/>
 
         <EditText
@@ -75,7 +59,23 @@
             android:minLines="1"
             android:maxLines = "2"
             android:text=""
-        />
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="about game"
+            android:layout_gravity="center"/>
+
+        <Button
+            android:id="@+id/games"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:onClick="selection"
+            android:minLines="1"
+            android:maxLines = "2"
+            android:text=""
+            />
     </LinearLayout>
 
     <LinearLayout
@@ -90,7 +90,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:onClick="save"
-            android:text="change" />
+            android:text="Create" />
 
         <Button
             android:id="@+id/back"
