@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Gamer</string>
+    <string name="facebook_app_id">1964834770454241</string>
+    <string name="fb_login_protocol_scheme">fb1964834770454241</string>
+</resources>
