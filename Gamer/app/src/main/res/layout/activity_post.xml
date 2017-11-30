@@ -24,7 +24,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
         android:onClick="add"
-        android:text="addneworevent"
+        android:text="add new or event"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

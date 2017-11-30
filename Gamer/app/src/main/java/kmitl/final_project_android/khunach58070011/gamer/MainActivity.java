@@ -94,9 +94,6 @@ public class MainActivity extends AppCompatActivity {
         TextView showemail = (TextView) findViewById(R.id.email);
         showemail.setText("Email : \n"+email);
         getmsg();
-        TextView showmsg = (TextView) findViewById(R.id.messagecnt);
-        showmsg.setText("unreadmessage :"+msg);
-
     }
 
     private void getmsg() {
@@ -110,6 +107,8 @@ public class MainActivity extends AppCompatActivity {
                             count += 1;
                         }
                         msg = count;
+                        TextView showmsg = (TextView) findViewById(R.id.messagecnt);
+                        showmsg.setText("unreadmessage : "+msg);
                     }
 
                     @Override

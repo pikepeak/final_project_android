@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import kmitl.final_project_android.khunach58070011.gamer.model.GamerGroup;
 import kmitl.final_project_android.khunach58070011.gamer.model.Requests;
 import kmitl.final_project_android.khunach58070011.gamer.model.UserInfoSent;
+import kmitl.final_project_android.khunach58070011.gamer.validation.validationNull;
 
 public class JoinGroupActivity extends AppCompatActivity {
     private static final String TAG = "Myapp";
@@ -29,8 +30,11 @@ public class JoinGroupActivity extends AppCompatActivity {
     UserInfoSent user;
     String gidsave;
     String sendname;
+    validationNull validationnull;
+    String leader;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        validationnull = new validationNull();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_join_group);
         mRootRef = FirebaseDatabase.getInstance().getReference();
@@ -44,12 +48,25 @@ public class JoinGroupActivity extends AppCompatActivity {
                 addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+                        int count = 0;
                         for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
                             GamerGroup gamerGroup;
                             gamerGroup = singleSnapshot.getValue(GamerGroup.class);
                             TextView name = (TextView) findViewById(R.id.request);
-                            name.setText("Group : \n"+gamerGroup.getName());
-                            gidsave = gid.getText().toString();
+                            count = 1;
+                            leader = gamerGroup.getLeader();
+                            if (leader.equals(mAuth.getCurrentUser().getUid())){
+                                Toast.makeText(JoinGroupActivity.this, "you are leader of this group.", Toast.LENGTH_LONG).show();
+                            }else {
+                                name.setText("Group : \n"+gamerGroup.getName());
+                                gidsave = gid.getText().toString();
+                            }
+                        }
+                        if (validationnull.validationJoinGroupInputIsNull(gid.getText().toString())){
+                            Toast.makeText(JoinGroupActivity.this, "Input Is Empty.", Toast.LENGTH_LONG).show();
+                        }
+                        else if (count == 0){
+                            Toast.makeText(JoinGroupActivity.this, "Not Found.", Toast.LENGTH_LONG).show();
                         }
                     }
 
@@ -61,11 +78,15 @@ public class JoinGroupActivity extends AppCompatActivity {
     }
 
     public void sentrequest(View view) {
-        DatabaseReference mRequestRef = mRootRef.child("requests");
-        final Requests requests = new Requests(sendname, user.getEmail());
-        mRequestRef.child(gidsave).child(mAuth.getCurrentUser().getUid()).setValue(requests);
-        mRequestRef.child(gidsave).child(mAuth.getCurrentUser().getUid()).child("status").setValue("wait");
-        finish();
+        if (gidsave == null){
+            Toast.makeText(JoinGroupActivity.this, "Pls Check Group First.", Toast.LENGTH_LONG).show();
+        }else{
+            DatabaseReference mRequestRef = mRootRef.child("requests");
+            final Requests requests = new Requests(sendname, user.getEmail());
+            mRequestRef.child(gidsave).child(mAuth.getCurrentUser().getUid()).setValue(requests);
+            mRequestRef.child(gidsave).child(mAuth.getCurrentUser().getUid()).child("status").setValue("wait");
+            finish();
+        }
     }
     private void loadUserProfile(DatabaseReference mRootRef) {
         mRootRef.child("users").child(mAuth.getUid()).

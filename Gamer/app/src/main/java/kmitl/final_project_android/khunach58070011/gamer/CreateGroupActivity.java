@@ -16,8 +16,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import kmitl.final_project_android.khunach58070011.gamer.model.GamerGroup;
 import kmitl.final_project_android.khunach58070011.gamer.model.UserInfoSent;
+import kmitl.final_project_android.khunach58070011.gamer.validation.validationNull;
 
 public class CreateGroupActivity extends AppCompatActivity {
+    validationNull validationNull = new validationNull();
     private static final String TAG = "MyApp";
     private FirebaseAuth mAuth;
     TextView showname;
@@ -37,22 +39,28 @@ public class CreateGroupActivity extends AppCompatActivity {
         showname = (TextView) findViewById(R.id.editName);
         showdesc = (TextView) findViewById(R.id.editDesc);
         showgame = (TextView) findViewById(R.id.favgame);
+        if (validationNull.validationCreateGroupInputIsNull(showname.getText().toString(),showdesc.getText().toString(),showgame.getText().toString())){
+            Toast.makeText(CreateGroupActivity.this, "Infomation cant be null", Toast.LENGTH_LONG).show();
+        }else{
+            final DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
+            loadUserProfile(mRootRef);
+            DatabaseReference mGroupRef = mRootRef.child("groups");
+            final GamerGroup gamerGroup = new GamerGroup(showname.getText().toString(),showdesc.getText().toString(),showgame.getText().toString(), mAuth.getUid().toString());
+            mGroupRef.push().setValue(gamerGroup , new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    uniqueKey = databaseReference.getKey();
+                    DatabaseReference mUserGroup = mRootRef.child("user-groups");
+                    mUserGroup.child(mAuth.getUid().toString()).child(uniqueKey).setValue(gamerGroup);
+                    DatabaseReference mGroupUser = mRootRef.child("group-users");
+                    mGroupUser.child(uniqueKey).child(mAuth.getUid().toString()).setValue(user);
+                    final DatabaseReference mUserMessageRef = mRootRef.child("group-list");
+                    mUserMessageRef.child(uniqueKey).push().child("name").setValue(gamerGroup.getFavgame());
+                    finish();
+                }
+            });
+        }
 
-        final DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
-        loadUserProfile(mRootRef);
-        DatabaseReference mGroupRef = mRootRef.child("groups");
-        final GamerGroup gamerGroup = new GamerGroup(showname.getText().toString(),showdesc.getText().toString(),showgame.getText().toString(), mAuth.getUid().toString());
-        mGroupRef.push().setValue(gamerGroup , new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                uniqueKey = databaseReference.getKey();
-                DatabaseReference mUserGroup = mRootRef.child("user-groups");
-                mUserGroup.child(mAuth.getUid().toString()).child(uniqueKey).setValue(gamerGroup);
-                DatabaseReference mGroupUser = mRootRef.child("group-users");
-                mGroupUser.child(uniqueKey).child(mAuth.getUid().toString()).setValue(user);
-                finish();
-            }
-        });
     }
     private void loadUserProfile(DatabaseReference mRootRef) {
         mRootRef.child("users").child(mAuth.getUid()).
@@ -72,4 +80,5 @@ public class CreateGroupActivity extends AppCompatActivity {
     public void back(View view) {
         finish();
     }
+
 }

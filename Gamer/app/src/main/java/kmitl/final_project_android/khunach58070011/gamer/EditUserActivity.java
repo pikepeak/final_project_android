@@ -17,6 +17,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import kmitl.final_project_android.khunach58070011.gamer.model.UserInfoSent;
+import kmitl.final_project_android.khunach58070011.gamer.validation.validationNull;
 
 import static kmitl.final_project_android.khunach58070011.gamer.MainActivity.nameGB;
 
@@ -27,6 +28,7 @@ public class EditUserActivity extends AppCompatActivity {
     TextView showdesc;
     TextView showgame;
     Button showgroup;
+    validationNull validationnull;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +36,7 @@ public class EditUserActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
         loadUserProfile(mRootRef);
-
+        validationnull = new validationNull();
     }
 
     private void loadUserProfile(DatabaseReference mRootRef) {
@@ -79,11 +81,16 @@ public class EditUserActivity extends AppCompatActivity {
         DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
         DatabaseReference mUsersRef = mRootRef.child("users");
         //mUsersRef.child(user.getUid()).setValue(userInfoSent);
-        mUsersRef.child(mAuth.getUid()).child("appname").setValue(showname.getText().toString());
-        mUsersRef.child(mAuth.getUid()).child("desc").setValue(showdesc.getText().toString());
-        mUsersRef.child(mAuth.getUid()).child("favgame").setValue(showgame.getText().toString());
-        mUsersRef.child(mAuth.getUid()).child("favgroup").setValue(showgroup.getText().toString());
-        finish();
+        if (validationnull.validationEditProfileInputIsNull(showname.getText().toString(),showdesc.getText().toString(),showgame.getText().toString(),showgroup.getText().toString())){
+            Toast.makeText(EditUserActivity.this, "pls enter all infomation.", Toast.LENGTH_LONG).show();
+        }else {
+            mUsersRef.child(mAuth.getUid()).child("appname").setValue(showname.getText().toString());
+            mUsersRef.child(mAuth.getUid()).child("desc").setValue(showdesc.getText().toString());
+            mUsersRef.child(mAuth.getUid()).child("favgame").setValue(showgame.getText().toString());
+            mUsersRef.child(mAuth.getUid()).child("favgroup").setValue(showgroup.getText().toString());
+            finish();
+        }
+
     }
 
     public void back(View view) {
@@ -101,5 +108,6 @@ public class EditUserActivity extends AppCompatActivity {
         super.onResume();
         showgroup = (Button) findViewById(R.id.favgroup);
         showgroup.setText(nameGB);
+        nameGB = "";
     }
 }

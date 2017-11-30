@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -19,6 +20,7 @@ import java.util.HashMap;
 
 import kmitl.final_project_android.khunach58070011.gamer.model.Requests;
 import kmitl.final_project_android.khunach58070011.gamer.model.UserInfoSent;
+import kmitl.final_project_android.khunach58070011.gamer.validation.validationNull;
 
 public class listgame extends AppCompatActivity {
     DatabaseReference mRootRef;
@@ -79,8 +81,14 @@ public class listgame extends AppCompatActivity {
     }
 
     public void add(View view) {
-                        final DatabaseReference mUserMessageRef = mRootRef.child("group-list");
-                        mUserMessageRef.child(gid).push().child("name").setValue(viewname.getText().toString());
-        loadgamelist(mRootRef);
+        validationNull validationnull = new validationNull();
+        if (validationnull.validationListInputIsNull(viewname.getText().toString())){
+            Toast.makeText(listgame.this, "pls enter gamename.", Toast.LENGTH_LONG).show();
+        }else{
+            final DatabaseReference mUserMessageRef = mRootRef.child("group-list");
+            mUserMessageRef.child(gid).push().child("name").setValue(viewname.getText().toString());
+            loadgamelist(mRootRef);
+        }
+
     }
 }

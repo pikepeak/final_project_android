@@ -18,6 +18,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import kmitl.final_project_android.khunach58070011.gamer.model.GamerGroup;
 import kmitl.final_project_android.khunach58070011.gamer.model.UserInfoSent;
+import kmitl.final_project_android.khunach58070011.gamer.validation.validationNull;
 
 import static kmitl.final_project_android.khunach58070011.gamer.MainActivity.nameGB;
 
@@ -70,12 +71,17 @@ public class EditGroup extends AppCompatActivity {
     }
 
     public void save(View view) {
+        validationNull validationnull = new validationNull();
         DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
         DatabaseReference mUsersRef = mRootRef.child("groups");
-        mUsersRef.child(gid).child("name").setValue(showname.getText().toString());
-        mUsersRef.child(gid).child("desc").setValue(showdesc.getText().toString());
-        mUsersRef.child(gid).child("favgame").setValue(showgame.getText().toString());
-        finish();
+        if (validationnull.validationEditGroupInputIsNull(showname.getText().toString(), showdesc.getText().toString(), showgame.getText().toString())){
+            Toast.makeText(EditGroup.this, "pls enter all infomation.", Toast.LENGTH_LONG).show();
+        }else {
+            mUsersRef.child(gid).child("name").setValue(showname.getText().toString());
+            mUsersRef.child(gid).child("desc").setValue(showdesc.getText().toString());
+            mUsersRef.child(gid).child("favgame").setValue(showgame.getText().toString());
+            finish();
+        }
     }
 
     public void back(View view) {
@@ -93,5 +99,6 @@ public class EditGroup extends AppCompatActivity {
         super.onResume();
         showgame = (Button) findViewById(R.id.favgame);
         showgame.setText(nameGB);
+        nameGB = "";
     }
 }

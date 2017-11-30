@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:inputType="textMultiLine"
             android:minLines="1"
-            android:maxLines = "2"
+            android:maxLines="5"
             android:text=""
             />
     </LinearLayout>

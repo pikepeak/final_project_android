@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -19,6 +20,7 @@ import java.util.HashMap;
 
 import kmitl.final_project_android.khunach58070011.gamer.model.Requests;
 import kmitl.final_project_android.khunach58070011.gamer.model.UserInfoSent;
+import kmitl.final_project_android.khunach58070011.gamer.validation.validationNull;
 
 public class Request extends AppCompatActivity {
     DatabaseReference mRootRef;
@@ -81,21 +83,31 @@ public class Request extends AppCompatActivity {
         viewList.setAdapter(adapter);
     }
     public void sentinv(View view) {
+        final validationNull validationNull = new validationNull();
         mRootRef.child("users").orderByChild("email").equalTo(viewemail.getText().toString()).
                 addListenerForSingleValueEvent(new ValueEventListener() {
                     String key;
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot userSnapshot : dataSnapshot.getChildren()){
+                        int count = 0;
+                        for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                             UserInfoSent user = userSnapshot.getValue(UserInfoSent.class);
                             key = userSnapshot.getKey();
+                            count += 1;
                         }
+                        Log.d(TAG, String.valueOf(count));
+                        if (validationNull.validationInvInputIsNull(viewemail.getText().toString())){
+                            Toast.makeText(Request.this, "pls enter email.", Toast.LENGTH_LONG).show();
+                        } else if (count <= 0){
+                            Toast.makeText(Request.this, "not found user.", Toast.LENGTH_LONG).show();
+                        }else{
                         final DatabaseReference mUserMessageRef = mRootRef.child("messages");
                         mUserMessageRef.child(key).child(id).child("name").setValue(name);
                         mUserMessageRef.child(key).child(id).child("type").setValue("inv");
                         mUserMessageRef.child(key).child(id).child("ans").setValue("wait");
                         mUserMessageRef.child(key).child(id).child("message").setValue("unread");
                         finish();
+                        }
                     }
 
                     @Override

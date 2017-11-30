@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -15,6 +16,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import kmitl.final_project_android.khunach58070011.gamer.model.Posts;
+import kmitl.final_project_android.khunach58070011.gamer.validation.validationNull;
 
 import static kmitl.final_project_android.khunach58070011.gamer.MainActivity.nameGB;
 
@@ -44,16 +46,21 @@ public class CreatePost extends AppCompatActivity {
         showdesc = (TextView) findViewById(R.id.editDesc);
         game = (Button) findViewById(R.id.games);
         //showgame = (TextView) findViewById(R.id.favgame);
-
         final DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
         DatabaseReference mGroupRef = mRootRef.child("post").child(gid);
         final Posts post = new Posts(showname.getText().toString(),showdesc.getText().toString(),swap_button.getText().toString(),game.getText().toString());
-        mGroupRef.push().setValue(post , new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                finish();
-            }
-    });
+        validationNull validationnull = new validationNull();
+        if (validationnull.validationPostInputIsNull(showname.getText().toString(),showdesc.getText().toString(),swap_button.getText().toString(),game.getText().toString())){
+            Toast.makeText(CreatePost.this, "pls enter all infomation.", Toast.LENGTH_LONG).show();
+        }else{
+            mGroupRef.push().setValue(post , new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    finish();
+                }
+            });
+        }
+
     }
 
     public void back(View view) {
