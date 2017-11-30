@@ -40,7 +40,7 @@ public class EditUserActivity extends AppCompatActivity {
     }
 
     private void loadUserProfile(DatabaseReference mRootRef) {
-        mRootRef.child("users").child(mAuth.getUid()).
+        mRootRef.child("users").child(mAuth.getCurrentUser().getUid()).
                 addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {

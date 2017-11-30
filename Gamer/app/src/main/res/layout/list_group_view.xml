@@ -3,7 +3,7 @@
     android:id="@+id/relativeLayout1"
     android:layout_height="fill_parent"
     android:layout_width="fill_parent"
-    android:background="#ede0e0"
+    android:background="#fbae5b"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <TextView

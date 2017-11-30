@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#5b9bfb"
     tools:context="kmitl.final_project_android.khunach58070011.gamer.EditGroup">
     <LinearLayout
         android:layout_width="match_parent"
