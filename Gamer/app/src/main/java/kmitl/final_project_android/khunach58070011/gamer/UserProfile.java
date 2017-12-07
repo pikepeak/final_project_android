@@ -1,5 +1,8 @@
 package kmitl.final_project_android.khunach58070011.gamer;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,6 +35,7 @@ public class UserProfile extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
+        setloading();
         id = getIntent().getStringExtra("ID");
         leader = getIntent().getStringExtra("leader");
         gid = getIntent().getStringExtra("gid");
@@ -44,6 +49,15 @@ public class UserProfile extends AppCompatActivity {
             b.setVisibility(View.INVISIBLE);
         }
 
+    }
+    ProgressDialog progress;
+    Handler pdCanceller;
+    private void setloading() {
+        progress = new ProgressDialog(this);
+        progress.setTitle("Loading");
+        progress.setMessage("Wait while loading...");
+        progress.setCancelable(false);
+        progress.show();
     }
     private void loadUserProfile(DatabaseReference mRootRef) {
         mRootRef.child("users").child(id).
@@ -86,6 +100,7 @@ public class UserProfile extends AppCompatActivity {
         showgroup.setText("favoriteGroup : "+favgroup);
         TextView showdesc = (TextView) findViewById(R.id.desc);
         showdesc.setText(""+desc);
+        progress.dismiss();
     }
 
     private void loadUserPic(String pic) {
@@ -99,10 +114,17 @@ public class UserProfile extends AppCompatActivity {
     }
 
     public void kick(View view) {
-        mRootRef.child("group-users").child(gid).child(id).removeValue();
-        mRootRef.child("messages").child(id).child(gid).removeValue();
-        mRootRef.child("requests").child(id).child(gid).removeValue();
-        mRootRef.child("user-groups").child(id).child(gid).removeValue();
-        finish();
+        setloading();
+        mRootRef.child("group-users").child(gid).child(id).removeValue(new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                mRootRef.child("messages").child(id).child(gid).removeValue();
+                mRootRef.child("requests").child(id).child(gid).removeValue();
+                mRootRef.child("user-groups").child(id).child(gid).removeValue();
+                progress.dismiss();
+                finish();
+            }
+        });
+
     }
 }

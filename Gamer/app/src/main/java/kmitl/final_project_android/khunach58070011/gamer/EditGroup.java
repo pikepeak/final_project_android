@@ -1,6 +1,8 @@
 package kmitl.final_project_android.khunach58070011.gamer;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -33,6 +36,7 @@ public class EditGroup extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_group);
+        setloading();
         mAuth = FirebaseAuth.getInstance();
         gid = getIntent().getStringExtra("ID");
         DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
@@ -66,19 +70,28 @@ public class EditGroup extends AppCompatActivity {
         showdesc.setText(desc);
         showgame = (Button) findViewById(R.id.favgame);
         showgame.setText(favgame);
+        progress.dismiss();
     }
 
     public void save(View view) {
+        setloading();
         validationNull validationnull = new validationNull();
         DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference mUsersRef = mRootRef.child("groups");
+        final DatabaseReference mUsersRef = mRootRef.child("groups");
         if (validationnull.validationEditGroupInputIsNull(showname.getText().toString(), showdesc.getText().toString(), showgame.getText().toString())){
+            progress.dismiss();
             Toast.makeText(EditGroup.this, "pls enter all infomation.", Toast.LENGTH_LONG).show();
         }else {
-            mUsersRef.child(gid).child("name").setValue(showname.getText().toString());
-            mUsersRef.child(gid).child("desc").setValue(showdesc.getText().toString());
-            mUsersRef.child(gid).child("favgame").setValue(showgame.getText().toString());
-            finish();
+            mUsersRef.child(gid).child("name").setValue(showname.getText().toString(), new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    mUsersRef.child(gid).child("desc").setValue(showdesc.getText().toString());
+                    mUsersRef.child(gid).child("favgame").setValue(showgame.getText().toString());
+                    progress.dismiss();
+                    finish();
+                }
+            });
+
         }
     }
 
@@ -98,5 +111,13 @@ public class EditGroup extends AppCompatActivity {
         showgame = (Button) findViewById(R.id.favgame);
         showgame.setText(nameGB);
         nameGB = "";
+    }
+    ProgressDialog progress;
+    private void setloading() {
+        progress = new ProgressDialog(this);
+        progress.setTitle("Loading");
+        progress.setMessage("Wait while loading...");
+        progress.setCancelable(false);
+        progress.show();
     }
 }

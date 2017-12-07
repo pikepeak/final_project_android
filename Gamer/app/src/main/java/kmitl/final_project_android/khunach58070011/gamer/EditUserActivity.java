@@ -1,6 +1,8 @@
 package kmitl.final_project_android.khunach58070011.gamer;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -33,12 +36,20 @@ public class EditUserActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_user);
+        setloading();
         mAuth = FirebaseAuth.getInstance();
         DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
         loadUserProfile(mRootRef);
         validationnull = new validationNull();
     }
-
+    ProgressDialog progress;
+    private void setloading() {
+        progress = new ProgressDialog(this);
+        progress.setTitle("Loading");
+        progress.setMessage("Wait while loading...");
+        progress.setCancelable(false);
+        progress.show();
+    }
     private void loadUserProfile(DatabaseReference mRootRef) {
         mRootRef.child("users").child(mAuth.getCurrentUser().getUid()).
                 addListenerForSingleValueEvent(new ValueEventListener() {
@@ -74,19 +85,28 @@ public class EditUserActivity extends AppCompatActivity {
         showgame.setText(favgame);
         showgroup = (Button) findViewById(R.id.favgroup);
         showgroup.setText(favgroup);
+        progress.dismiss();
     }
 
     public void save(View view) {
+        setloading();
         DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference mUsersRef = mRootRef.child("users");
+        final DatabaseReference mUsersRef = mRootRef.child("users");
         if (validationnull.validationEditProfileInputIsNull(showname.getText().toString(),showdesc.getText().toString(),showgame.getText().toString(),showgroup.getText().toString())){
+            progress.dismiss();
             Toast.makeText(EditUserActivity.this, "pls enter all infomation.", Toast.LENGTH_LONG).show();
         }else {
-            mUsersRef.child(mAuth.getUid()).child("appname").setValue(showname.getText().toString());
-            mUsersRef.child(mAuth.getUid()).child("desc").setValue(showdesc.getText().toString());
-            mUsersRef.child(mAuth.getUid()).child("favgame").setValue(showgame.getText().toString());
-            mUsersRef.child(mAuth.getUid()).child("favgroup").setValue(showgroup.getText().toString());
-            finish();
+            mUsersRef.child(mAuth.getUid()).child("appname").setValue(showname.getText().toString(), new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    mUsersRef.child(mAuth.getUid()).child("desc").setValue(showdesc.getText().toString());
+                    mUsersRef.child(mAuth.getUid()).child("favgame").setValue(showgame.getText().toString());
+                    mUsersRef.child(mAuth.getUid()).child("favgroup").setValue(showgroup.getText().toString());
+                    progress.dismiss();
+                    finish();
+                }
+            });
+
         }
 
     }

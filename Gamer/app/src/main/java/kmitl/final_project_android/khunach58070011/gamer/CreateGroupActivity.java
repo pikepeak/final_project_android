@@ -1,5 +1,8 @@
 package kmitl.final_project_android.khunach58070011.gamer;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,6 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,10 +39,12 @@ public class CreateGroupActivity extends AppCompatActivity {
     }
 
     public void save(View view) {
+        setloading();
         showname = (TextView) findViewById(R.id.editName);
         showdesc = (TextView) findViewById(R.id.editDesc);
         showgame = (TextView) findViewById(R.id.favgame);
         if (validationNull.validationCreateGroupInputIsNull(showname.getText().toString(),showdesc.getText().toString(),showgame.getText().toString())){
+            progress.dismiss();
             Toast.makeText(CreateGroupActivity.this, "Infomation cant be null", Toast.LENGTH_LONG).show();
         }else{
             final DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
@@ -55,6 +61,7 @@ public class CreateGroupActivity extends AppCompatActivity {
                     mGroupUser.child(uniqueKey).child(mAuth.getUid().toString()).setValue(user);
                     final DatabaseReference mUserMessageRef = mRootRef.child("group-list");
                     mUserMessageRef.child(uniqueKey).push().child("name").setValue(gamerGroup.getFavgame());
+                    progress.dismiss();
                     finish();
                 }
             });
@@ -76,6 +83,14 @@ public class CreateGroupActivity extends AppCompatActivity {
     }
     public void back(View view) {
         finish();
+    }
+    ProgressDialog progress;
+    private void setloading() {
+        progress = new ProgressDialog(this);
+        progress.setTitle("Loading");
+        progress.setMessage("Wait while loading...");
+        progress.setCancelable(false);
+        progress.show();
     }
 
 }

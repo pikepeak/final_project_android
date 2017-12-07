@@ -1,7 +1,9 @@
 package kmitl.final_project_android.khunach58070011.gamer;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,6 +43,7 @@ public class CreatePost extends AppCompatActivity {
 
     @SuppressLint("WrongViewCast")
     public void save(View view) {
+        setloading();
         showname = (TextView) findViewById(R.id.editName);
         showdesc = (TextView) findViewById(R.id.editDesc);
         game = (Button) findViewById(R.id.games);
@@ -48,16 +52,26 @@ public class CreatePost extends AppCompatActivity {
         final Posts post = new Posts(showname.getText().toString(),showdesc.getText().toString(),swap_button.getText().toString(),game.getText().toString());
         validationNull validationnull = new validationNull();
         if (validationnull.validationPostInputIsNull(showname.getText().toString(),showdesc.getText().toString(),swap_button.getText().toString(),game.getText().toString())){
+            progress.dismiss();
             Toast.makeText(CreatePost.this, "pls enter all infomation.", Toast.LENGTH_LONG).show();
         }else{
             mGroupRef.push().setValue(post , new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    progress.dismiss();
                     finish();
                 }
             });
         }
 
+    }
+    ProgressDialog progress;
+    private void setloading() {
+        progress = new ProgressDialog(this);
+        progress.setTitle("Loading");
+        progress.setMessage("Wait while loading...");
+        progress.setCancelable(false);
+        progress.show();
     }
 
     public void back(View view) {

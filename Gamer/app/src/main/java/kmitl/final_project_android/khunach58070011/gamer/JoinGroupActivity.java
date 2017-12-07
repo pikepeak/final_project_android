@@ -1,5 +1,8 @@
 package kmitl.final_project_android.khunach58070011.gamer;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,13 +41,22 @@ public class JoinGroupActivity extends AppCompatActivity {
         validationnull = new validationNull();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_join_group);
+        setloading();
         mRootRef = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
         loadUserProfile(mRootRef);
         gid = (TextView) findViewById(R.id.groupid);
     }
-
+    ProgressDialog progress;
+    private void setloading() {
+        progress = new ProgressDialog(this);
+        progress.setTitle("Loading");
+        progress.setMessage("Wait while loading...");
+        progress.setCancelable(false);
+        progress.show();
+    }
     public void check(View view) {
+        setloading();
         mRootRef.child("groups").orderByKey().equalTo(gid.getText().toString()).
                 addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -68,24 +81,34 @@ public class JoinGroupActivity extends AppCompatActivity {
                         else if (count == 0){
                             Toast.makeText(JoinGroupActivity.this, "Not Found.", Toast.LENGTH_LONG).show();
                         }
+                        progress.dismiss();
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         Log.e(TAG, databaseError.getMessage());
+                        progress.dismiss();
                     }
                 });
     }
 
     public void sentrequest(View view) {
+        setloading();
         if (gidsave == null){
+            progress.dismiss();
             Toast.makeText(JoinGroupActivity.this, "Pls Check Group First.", Toast.LENGTH_LONG).show();
         }else{
-            DatabaseReference mRequestRef = mRootRef.child("requests");
+            final DatabaseReference mRequestRef = mRootRef.child("requests");
             final Requests requests = new Requests(sendname, user.getEmail());
-            mRequestRef.child(gidsave).child(mAuth.getCurrentUser().getUid()).setValue(requests);
-            mRequestRef.child(gidsave).child(mAuth.getCurrentUser().getUid()).child("status").setValue("wait");
-            finish();
+            mRequestRef.child(gidsave).child(mAuth.getCurrentUser().getUid()).setValue(requests, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    mRequestRef.child(gidsave).child(mAuth.getCurrentUser().getUid()).child("status").setValue("wait");
+                    progress.dismiss();
+                    finish();
+                }
+            });
+
         }
     }
     private void loadUserProfile(DatabaseReference mRootRef) {
@@ -100,11 +123,13 @@ public class JoinGroupActivity extends AppCompatActivity {
                         }else {
                             sendname = user.getAppname();
                         }
+                        progress.dismiss();
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         Log.e(TAG, databaseError.getMessage());
+                        progress.dismiss();
                     }
                 });
     }

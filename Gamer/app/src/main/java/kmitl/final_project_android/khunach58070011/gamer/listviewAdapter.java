@@ -1,7 +1,9 @@
 package kmitl.final_project_android.khunach58070011.gamer;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +11,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -154,20 +158,34 @@ class listviewAdapter extends BaseAdapter {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mMessageRef.child(id).child(String.valueOf(map.get("ID_COLUMN"))).child("status").setValue("no");
-                    activity.finish();
+                    setloading();
+                    mMessageRef.child(id).child(String.valueOf(map.get("ID_COLUMN"))).child("status").setValue("no", new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                            progress.dismiss();
+                            activity.finish();
+                        }
+                    });
+
                 }
             });
             viewyes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mMessageRef.child(id).child(String.valueOf(map.get("ID_COLUMN"))).child("status").setValue("yes");
-                    DatabaseReference mUserGroup = mRootRef.child("user-groups");
-                    mUserGroup.child(String.valueOf(map.get("ID_COLUMN"))).child(id).setValue(gamegroup);
-                    DatabaseReference mGroupUser = mRootRef.child("group-users");
-                    mGroupUser.child(id).child(String.valueOf(map.get("ID_COLUMN"))).setValue(user);
-                    mGroupUser.child(id).child(String.valueOf(map.get("ID_COLUMN"))).child("Type").setValue("user");
-                    activity.finish();
+                    setloading();
+                    mMessageRef.child(id).child(String.valueOf(map.get("ID_COLUMN"))).child("status").setValue("yes", new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                            DatabaseReference mUserGroup = mRootRef.child("user-groups");
+                            mUserGroup.child(String.valueOf(map.get("ID_COLUMN"))).child(id).setValue(gamegroup);
+                            DatabaseReference mGroupUser = mRootRef.child("group-users");
+                            mGroupUser.child(id).child(String.valueOf(map.get("ID_COLUMN"))).setValue(user);
+                            mGroupUser.child(id).child(String.valueOf(map.get("ID_COLUMN"))).child("Type").setValue("user");
+                            progress.dismiss();
+                            activity.finish();
+                        }
+                    });
+
                 }
             });
         }else if(select == 3){
@@ -183,20 +201,33 @@ class listviewAdapter extends BaseAdapter {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mUserMessageRef.child(mAuth.getCurrentUser().getUid()).child(String.valueOf(map.get("ID_COLUMN"))).child("ans").setValue("no");
-                    activity.finish();
+                    setloading();
+                    mUserMessageRef.child(mAuth.getCurrentUser().getUid()).child(String.valueOf(map.get("ID_COLUMN"))).child("ans").setValue("no", new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                            progress.dismiss();
+                            activity.finish();
+                        }
+                    });
                 }
             });
             viewyes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mUserMessageRef.child(mAuth.getCurrentUser().getUid()).child(String.valueOf(map.get("ID_COLUMN"))).child("ans").setValue("yes");
-                    DatabaseReference mUserGroup = mRootRef.child("user-groups");
-                    mUserGroup.child(mAuth.getCurrentUser().getUid()).child(String.valueOf(map.get("ID_COLUMN"))).setValue(gamegroup);
-                    DatabaseReference mGroupUser = mRootRef.child("group-users");
-                    mGroupUser.child(String.valueOf(map.get("ID_COLUMN"))).child(mAuth.getCurrentUser().getUid()).setValue(user);
-                    mGroupUser.child(String.valueOf(map.get("ID_COLUMN"))).child(mAuth.getCurrentUser().getUid()).child("Type").setValue("user");
-                    activity.finish();
+                    setloading();
+                    mUserMessageRef.child(mAuth.getCurrentUser().getUid()).child(String.valueOf(map.get("ID_COLUMN"))).child("ans").setValue("yes", new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                            DatabaseReference mUserGroup = mRootRef.child("user-groups");
+                            mUserGroup.child(mAuth.getCurrentUser().getUid()).child(String.valueOf(map.get("ID_COLUMN"))).setValue(gamegroup);
+                            DatabaseReference mGroupUser = mRootRef.child("group-users");
+                            mGroupUser.child(String.valueOf(map.get("ID_COLUMN"))).child(mAuth.getCurrentUser().getUid()).setValue(user);
+                            mGroupUser.child(String.valueOf(map.get("ID_COLUMN"))).child(mAuth.getCurrentUser().getUid()).child("Type").setValue("user");
+                            progress.dismiss();
+                            activity.finish();
+                        }
+                    });
+
                 }
             });
 
@@ -317,5 +348,13 @@ class listviewAdapter extends BaseAdapter {
     private class ViewHolder {
         TextView txtFirst;
         TextView txtsec;
+    }
+    ProgressDialog progress;
+    private void setloading() {
+        progress = new ProgressDialog(this.activity);
+        progress.setTitle("Loading");
+        progress.setMessage("Wait while loading...");
+        progress.setCancelable(false);
+        progress.show();
     }
 }

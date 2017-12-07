@@ -1,5 +1,8 @@
 package kmitl.final_project_android.khunach58070011.gamer;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +11,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,13 +39,21 @@ public class Request extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request);
+        setloading();
         id = getIntent().getStringExtra("ID");
         name = getIntent().getStringExtra("Name");
         mRootRef = FirebaseDatabase.getInstance().getReference();
         viewemail = (TextView) findViewById(R.id.inputname);
         loadMessagelist(mRootRef);
     }
-
+    ProgressDialog progress;
+    private void setloading() {
+        progress = new ProgressDialog(this);
+        progress.setTitle("Loading");
+        progress.setMessage("Wait while loading...");
+        progress.setCancelable(false);
+        progress.show();
+    }
     private void loadMessagelist(DatabaseReference mRootRef) {
         mRootRef.child("requests").child(id).orderByChild("status").equalTo("wait").
                 addListenerForSingleValueEvent(new ValueEventListener() {
@@ -79,8 +91,10 @@ public class Request extends AppCompatActivity {
         }
         listviewAdapter adapter = new listviewAdapter(Request.this, sentlist, id);
         viewList.setAdapter(adapter);
+        progress.dismiss();
     }
     public void sentinv(View view) {
+        setloading();
         final validationNull validationNull = new validationNull();
         mRootRef.child("users").orderByChild("email").equalTo(viewemail.getText().toString()).
                 addListenerForSingleValueEvent(new ValueEventListener() {
@@ -95,22 +109,31 @@ public class Request extends AppCompatActivity {
                         }
                         Log.d(TAG, String.valueOf(count));
                         if (validationNull.validationInvInputIsNull(viewemail.getText().toString())){
+                            progress.dismiss();
                             Toast.makeText(Request.this, "pls enter email.", Toast.LENGTH_LONG).show();
                         } else if (count <= 0){
+                            progress.dismiss();
                             Toast.makeText(Request.this, "not found user.", Toast.LENGTH_LONG).show();
                         }else{
                         final DatabaseReference mUserMessageRef = mRootRef.child("messages");
-                        mUserMessageRef.child(key).child(id).child("name").setValue(name);
-                        mUserMessageRef.child(key).child(id).child("type").setValue("inv");
-                        mUserMessageRef.child(key).child(id).child("ans").setValue("wait");
-                        mUserMessageRef.child(key).child(id).child("message").setValue("unread");
-                        finish();
+                        mUserMessageRef.child(key).child(id).child("name").setValue(name, new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                mUserMessageRef.child(key).child(id).child("type").setValue("inv");
+                                mUserMessageRef.child(key).child(id).child("ans").setValue("wait");
+                                mUserMessageRef.child(key).child(id).child("message").setValue("unread");
+                                progress.dismiss();
+                                finish();
+                            }
+                        });
+
                         }
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         Log.e(TAG, databaseError.getMessage());
+                        progress.dismiss();
                     }
                 });
 
