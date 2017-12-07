@@ -32,6 +32,17 @@
                 />
 
             <TextView
+                android:id="@+id/showid"
+                android:layout_width="match_parent"
+                android:background="#556fe6"
+                android:layout_weight="0.5"
+                android:text="ID : DASdASFGQWRFAEGFASFDASGASDG"
+                android:textSize="12dp"
+                android:textAlignment="center"
+                android:layout_height="wrap_content"
+                />
+
+            <TextView
                 android:id="@+id/favgame"
                 android:background="#556fe6"
                 android:layout_width="match_parent"

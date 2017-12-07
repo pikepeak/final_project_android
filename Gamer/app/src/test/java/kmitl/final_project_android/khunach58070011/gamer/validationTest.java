@@ -7,9 +7,6 @@ import kmitl.final_project_android.khunach58070011.gamer.validation.validationNu
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
-/**
- * Created by khunach on 11/30/2017.
- */
 public class validationTest {
     @Test
     public void CreateGroupAllInputIsNull(){

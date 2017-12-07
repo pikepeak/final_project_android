@@ -29,7 +29,6 @@ public class post extends AppCompatActivity {
     private static final String TAG = "MyApp";
     private ArrayList<Posts> list = new ArrayList<>();
     private ArrayList<String> key = new ArrayList<>();
-    private FirebaseAuth mAuth;
     private ListView viewList;
     String gid;
     @Override
@@ -38,7 +37,6 @@ public class post extends AppCompatActivity {
         setContentView(R.layout.activity_post);
         gid = getIntent().getStringExtra("ID");
         mRootRef = FirebaseDatabase.getInstance().getReference();
-        mAuth = FirebaseAuth.getInstance();
         loadpostlist(mRootRef);
     }
 

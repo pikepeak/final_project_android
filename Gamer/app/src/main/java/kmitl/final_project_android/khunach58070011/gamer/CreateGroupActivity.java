@@ -32,7 +32,6 @@ public class CreateGroupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_group);
         mAuth = FirebaseAuth.getInstance();
-        DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
     }
 
     public void save(View view) {
@@ -68,9 +67,7 @@ public class CreateGroupActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         user = dataSnapshot.getValue(UserInfoSent.class);
-                        //finish();
                     }
-
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         Log.e(TAG, databaseError.getMessage());

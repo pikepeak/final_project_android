@@ -48,10 +48,8 @@ public class EditGroup extends AppCompatActivity {
                         if (gamerGroup == null) {
                             Toast.makeText(EditGroup.this, "Error: could not fetch user.", Toast.LENGTH_LONG).show();
                         } else {
-                            String sendname;
                             writeGroup(gamerGroup.getName(), gamerGroup.getDesc(), gamerGroup.getFavgame());
                         }
-                        //finish();
                     }
 
                     @Override

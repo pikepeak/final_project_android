@@ -1,7 +1,5 @@
 package kmitl.final_project_android.khunach58070011.gamer.model;
 
-import android.widget.Button;
-
 public class Posts {
     private String name;
     private String type;

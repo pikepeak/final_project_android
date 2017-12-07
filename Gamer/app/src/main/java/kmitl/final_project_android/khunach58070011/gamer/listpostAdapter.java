@@ -16,12 +16,9 @@ import java.util.HashMap;
 import kmitl.final_project_android.khunach58070011.gamer.model.GamerGroup;
 
 public class listpostAdapter extends BaseAdapter {
-    private static final String TAG = "MyApp";
     public ArrayList<HashMap> list;
     Activity activity;
-    int select = 0;
     DatabaseReference mRootRef;
-    private GamerGroup gamegroup;
     String gid;
 
     public listpostAdapter(post post, ArrayList<HashMap> sentlist, String gid) {

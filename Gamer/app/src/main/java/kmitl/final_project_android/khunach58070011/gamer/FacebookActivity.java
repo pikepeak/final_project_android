@@ -37,13 +37,10 @@ public class FacebookActivity extends AppCompatActivity {
     private CallbackManager callbackManager;
     private LoginButton loginButton;
     private FirebaseAuth mAuth;
-// ...
-// Initialize Firebase Auth
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.facebooklogin);
         callbackManager = CallbackManager.Factory.create();
         loginButton = (LoginButton) findViewById(R.id.login_button);
@@ -96,7 +93,6 @@ public class FacebookActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
@@ -104,7 +100,6 @@ public class FacebookActivity extends AppCompatActivity {
                             startActivity(intent);
                             finish();
                         } else {
-                            // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(FacebookActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
@@ -118,12 +113,10 @@ public class FacebookActivity extends AppCompatActivity {
         if (user != null) {
             DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
             DatabaseReference mUsersRef = mRootRef.child("users");
-            //mUsersRef.child(user.getUid()).setValue(userInfoSent);
             mUsersRef.child(user.getUid()).child("email").setValue(user.getEmail());
             mUsersRef.child(user.getUid()).child("name").setValue(user.getDisplayName());
             String facebookUserId = "";
             for(UserInfo profile : mAuth.getCurrentUser().getProviderData()) {
-                // check if the provider id matches "facebook.com"
                 if(FacebookAuthProvider.PROVIDER_ID.equals(profile.getProviderId())) {
                     facebookUserId = profile.getUid();
                 }

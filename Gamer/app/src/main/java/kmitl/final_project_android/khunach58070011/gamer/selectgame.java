@@ -23,7 +23,6 @@ public class selectgame extends AppCompatActivity {
     private static final String TAG = "MyApp";
     private ArrayList<Requests> list = new ArrayList<>();
     private ArrayList<String> key = new ArrayList<>();
-    private FirebaseAuth mAuth;
     private ListView viewList;
     String gid;
     @Override
@@ -32,7 +31,6 @@ public class selectgame extends AppCompatActivity {
         setContentView(R.layout.activity_selectgame);
         gid = getIntent().getStringExtra("ID");
         mRootRef = FirebaseDatabase.getInstance().getReference();
-        mAuth = FirebaseAuth.getInstance();
         loadgamelist(mRootRef);
     }
 

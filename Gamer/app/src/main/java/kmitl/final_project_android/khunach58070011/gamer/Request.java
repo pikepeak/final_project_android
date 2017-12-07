@@ -27,7 +27,6 @@ public class Request extends AppCompatActivity {
     private static final String TAG = "MyApp";
     private ArrayList<Requests> list = new ArrayList<>();
     private ArrayList<String> key = new ArrayList<>();
-    private FirebaseAuth mAuth;
     private ListView viewList;
     private TextView viewemail;
     String id;
@@ -39,7 +38,6 @@ public class Request extends AppCompatActivity {
         id = getIntent().getStringExtra("ID");
         name = getIntent().getStringExtra("Name");
         mRootRef = FirebaseDatabase.getInstance().getReference();
-        mAuth = FirebaseAuth.getInstance();
         viewemail = (TextView) findViewById(R.id.inputname);
         loadMessagelist(mRootRef);
     }

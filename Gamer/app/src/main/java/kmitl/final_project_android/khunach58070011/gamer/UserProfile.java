@@ -66,7 +66,6 @@ public class UserProfile extends AppCompatActivity {
                             loadUserPic(user.getPic());
                             writeUserProfile(sendname, user.getEmail(), user.getFavgame(), user.getFavgroup(), user.getDesc());
                         }
-                        //finish();
                     }
 
                     @Override
@@ -82,9 +81,9 @@ public class UserProfile extends AppCompatActivity {
         TextView showemail = (TextView) findViewById(R.id.email);
         showemail.setText("Email : "+userEmail);
         TextView showgame = (TextView) findViewById(R.id.games);
-        showgame.setText("favgame : "+favgame);
+        showgame.setText("favoritegame : "+favgame);
         TextView showgroup = (TextView) findViewById(R.id.group);
-        showgroup.setText("favGroup : "+favgroup);
+        showgroup.setText("favoriteGroup : "+favgroup);
         TextView showdesc = (TextView) findViewById(R.id.desc);
         showdesc.setText(""+desc);
     }

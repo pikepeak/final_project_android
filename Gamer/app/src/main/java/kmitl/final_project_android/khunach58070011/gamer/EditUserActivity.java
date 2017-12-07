@@ -56,7 +56,6 @@ public class EditUserActivity extends AppCompatActivity {
                             }
                             writeUserProfile(sendname, user.getDesc(), user.getFavgame(), user.getFavgroup());
                         }
-                        //finish();
                     }
 
                     @Override
@@ -80,7 +79,6 @@ public class EditUserActivity extends AppCompatActivity {
     public void save(View view) {
         DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
         DatabaseReference mUsersRef = mRootRef.child("users");
-        //mUsersRef.child(user.getUid()).setValue(userInfoSent);
         if (validationnull.validationEditProfileInputIsNull(showname.getText().toString(),showdesc.getText().toString(),showgame.getText().toString(),showgroup.getText().toString())){
             Toast.makeText(EditUserActivity.this, "pls enter all infomation.", Toast.LENGTH_LONG).show();
         }else {

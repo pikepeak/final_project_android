@@ -1,9 +1,5 @@
 package kmitl.final_project_android.khunach58070011.gamer.model;
 
-/**
- * Created by khunach on 11/25/2017.
- */
-
 public class GamerGroup {
     private String name;
     private String desc;

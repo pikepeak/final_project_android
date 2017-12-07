@@ -36,8 +36,6 @@ public class CreatePost extends AppCompatActivity {
         gid = getIntent().getStringExtra("ID");
         mAuth = FirebaseAuth.getInstance();
         swap_button = (ToggleButton) findViewById(R.id.type);
-        //swap_button.setChecked(true);
-        DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
     }
 
     @SuppressLint("WrongViewCast")
@@ -45,7 +43,6 @@ public class CreatePost extends AppCompatActivity {
         showname = (TextView) findViewById(R.id.editName);
         showdesc = (TextView) findViewById(R.id.editDesc);
         game = (Button) findViewById(R.id.games);
-        //showgame = (TextView) findViewById(R.id.favgame);
         final DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
         DatabaseReference mGroupRef = mRootRef.child("post").child(gid);
         final Posts post = new Posts(showname.getText().toString(),showdesc.getText().toString(),swap_button.getText().toString(),game.getText().toString());

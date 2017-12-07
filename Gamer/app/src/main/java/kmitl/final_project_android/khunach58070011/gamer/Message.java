@@ -27,7 +27,6 @@ public class Message extends AppCompatActivity {
     private String TAG = "Myapp";
     private FirebaseAuth mAuth;
     private DatabaseReference mRootRef;
-    private String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +35,6 @@ public class Message extends AppCompatActivity {
         mRootRef = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
         loadMessagelist(mRootRef);
-        String name;
     }
     private void loadMessagelist(DatabaseReference mRootRef) {
         mRootRef.child("messages").child(mAuth.getCurrentUser().getUid()).orderByChild("ans").equalTo("wait").

@@ -105,7 +105,6 @@ public class groupActivity extends AppCompatActivity {
                                 level = 0;
                             }
                         }
-                        //finish();
                     }
 
                     @Override
@@ -122,6 +121,8 @@ public class groupActivity extends AppCompatActivity {
         favgame.setText("Game : \n"+user.getFavgame());
         TextView desc = (TextView) findViewById(R.id.desc);
         desc.setText(user.getDesc());
+        TextView showid = (TextView) findViewById(R.id.showid);
+        showid.setText("ID : "+id);
         leader = user.getLeader();
     }
 
@@ -135,9 +136,6 @@ public class groupActivity extends AppCompatActivity {
         Intent intent = new Intent(groupActivity.this, listgame.class);
         intent.putExtra("ID", gid);
         startActivity(intent);
-    }
-
-    public void chat(View view) {
     }
 
     @Override
